@@ -37,6 +37,7 @@ namespace FO2Dat
                     Z_DATA_ERROR => new Exception("Input data was corrupted or incomplete!"),
                     Z_MEM_ERROR => new Exception("Not enough memory!"),
                     Z_BUF_ERROR => new Exception("Not enough room in the output buffer!"),
+                    Z_VERSION_ERROR => new Exception("The version of zlib.h and the version of the library linked do not match!"),
                     _ => new Exception("Unexpected error!"),
                 };
             }
