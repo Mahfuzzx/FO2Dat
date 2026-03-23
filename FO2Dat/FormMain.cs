@@ -84,7 +84,7 @@ namespace FO2Dat
             prbProgress.Visible = true;
             Enabled = false;
             List<DirEntry> entries = [];
-            string fullPath = StringHelper.removePath(StringHelper.addSlash(trvTree.SelectedNode.FullPath), StringHelper.addSlash(datFile.fileTitle));
+            string fullPath = StringHelper.removePath(StringHelper.addSlash(trvTree.SelectedNode?.FullPath ?? throw (new NullReferenceException())), StringHelper.addSlash(datFile.fileTitle));
             foreach (ListViewItem listItem in lstFiles.Items)
             {
                 if (listItem.Selected)
@@ -118,18 +118,18 @@ namespace FO2Dat
                 {
                     string subDirName = path[0];
                     if (folderList.Find(x => x.Name == subDirName) == null)
-                        folderList.Add(new ListViewItem(new string[] { subDirName, str.folder ?? "" }, 0, lstFiles.Groups["grpFolders"]) { Name = subDirName });
+                        folderList.Add(new ListViewItem([subDirName, str.folder ?? ""], 0, lstFiles.Groups["grpFolders"]) { Name = subDirName });
                 }
                 else
                 {
                     string fileTitle = path[0];
-                    ListViewItem newFile = new(new string[] {
+                    ListViewItem newFile = new([
                         fileTitle,
                         (dirEntry.type == 1 ? str.compressed : str.uncompressed)??"",
                         StringHelper.formatSizeString(dirEntry.realSize),
                         StringHelper.formatSizeString(dirEntry.packedSize),
                         Convert.ToString(dirEntry.offset, 16).PadLeft(8, '0')
-                    }, 1, lstFiles.Groups["grpFiles"])
+                    ], 1, lstFiles.Groups["grpFiles"])
                     {
                         Name = fileTitle,
                         UseItemStyleForSubItems = false,
@@ -149,7 +149,7 @@ namespace FO2Dat
             var slGrp = lstFiles.SelectedItems[0].Group;
             if (slGrp == null) return;
             if (slGrp.Name != "grpFolders") return;
-            var found = trvTree.SelectedNode.Nodes.Find(lstFiles.SelectedItems[0].Text, false);
+            var found = trvTree.SelectedNode?.Nodes.Find(lstFiles.SelectedItems[0].Text, false) ?? throw (new NullReferenceException());
             if (found.Length != 0) trvTree.SelectedNode = found[0];
         }
 
