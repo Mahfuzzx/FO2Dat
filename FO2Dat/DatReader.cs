@@ -82,19 +82,19 @@ namespace FO2Dat
 
         public static void extractFile(string datFile, DirEntry entry, string destinationPath, string pathFilter = "")
         {
-            //ZLibHelper zLib = new();
             destinationPath = StringHelper.addSlash(destinationPath);
             string file = createDirectoryStructureAndReturnFileName(destinationPath, entry.fileName, pathFilter);
             if (File.Exists(file)) File.Delete(file);
             using BinaryWriter writer = new(File.Create(file));
             byte[] fileBuff;
+            if (entry.packedSize > int.MaxValue) throw new OverflowException("Packed size exceeds maximum supported size.");
             using (BinaryReader reader = new(File.Open(datFile, FileMode.Open)))
             {
                 reader.BaseStream.Seek(entry.offset, SeekOrigin.Begin);
                 fileBuff = reader.ReadBytes((int)entry.packedSize);
             }
             byte[] writeBuff;
-            if (entry.type == 1) writeBuff = ZLibHelper.uncompress(fileBuff, entry.realSize);
+            if (entry.type == 1) writeBuff = ZLibHelperService.uncompress(fileBuff, entry.realSize);
             else writeBuff = fileBuff;
             writer.Write(writeBuff);
         }

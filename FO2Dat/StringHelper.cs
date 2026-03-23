@@ -4,7 +4,11 @@
     {
         public static string[] splitPath(string fullPath) => fullPath.Split('\\');
 
-        public static string addSlash(string path) => path + ((path[^1..] != "\\") ? "\\" : "");
+        public static string addSlash(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return path ?? string.Empty;
+            return path.EndsWith("\\") ? path : path + "\\";
+        }
 
         public static string left(string source, int length) => source[..length];
 

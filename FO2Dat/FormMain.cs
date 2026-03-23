@@ -79,12 +79,13 @@ namespace FO2Dat
         {
             if (datFile == null) return;
             if (lstFiles.SelectedItems.Count == 0) return;
+            if (trvTree.SelectedNode == null) return;
             if (fldBrowse.ShowDialog(this) == DialogResult.Cancel) return;
             prbProgress.Value = 0;
             prbProgress.Visible = true;
             Enabled = false;
             List<DirEntry> entries = [];
-            string fullPath = StringHelper.removePath(StringHelper.addSlash(trvTree.SelectedNode?.FullPath ?? throw (new NullReferenceException())), StringHelper.addSlash(datFile.fileTitle));
+            string fullPath = StringHelper.removePath(StringHelper.addSlash(trvTree.SelectedNode.FullPath), StringHelper.addSlash(datFile.fileTitle));
             foreach (ListViewItem listItem in lstFiles.Items)
             {
                 if (listItem.Selected)
@@ -305,7 +306,8 @@ namespace FO2Dat
 
         private void wrkCompress_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            openFile();
+            if (!string.IsNullOrEmpty(dlgSave.FileName))
+                openFile(dlgSave.FileName);
             prbProgress.Visible = false;
             Enabled = true;
         }

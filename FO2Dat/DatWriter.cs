@@ -9,7 +9,6 @@ namespace FO2Dat
 
         public static void createDatHeader(DatFile datFile, DirectoryInfo path, string root = "", BinaryWriter? writer = null, uint total = 0, BackgroundWorker? worker = null)
         {
-            ZLibHelper zLib = new();
             root = (root == "") ? path.FullName : root;
             FileInfo[] files = Array.FindAll(path.GetFiles(), x => (x.Attributes & FileAttributes.Hidden) == 0);
             DirectoryInfo[] folders = Array.FindAll(path.GetDirectories(), x => (x.Attributes & FileAttributes.Hidden) == 0);
@@ -30,7 +29,7 @@ namespace FO2Dat
                     using BinaryReader reader = new(File.Open(file.FullName, FileMode.Open));
                     byte[] readBuff = new byte[dirEntry.realSize];
                     readBuff = reader.ReadBytes(readBuff.Length);
-                    byte[] compressed = ZLibHelper.compress(readBuff);
+                    byte[] compressed = ZLibHelperService.compress(readBuff);
                     if (compressed.Length < readBuff.Length) dirEntry.type = 1;
                     else compressed = readBuff;
                     dirEntry.packedSize = (uint)compressed.Length;

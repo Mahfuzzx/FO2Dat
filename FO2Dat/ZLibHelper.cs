@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿/*using System.Runtime.InteropServices;
 
 namespace FO2Dat
 {
@@ -48,5 +48,38 @@ namespace FO2Dat
         public static byte[] compress(byte[] source) => zLibRoutineCall(source);
 
         public static byte[] uncompress(byte[] compressed, uint realSize) => zLibRoutineCall(compressed, realSize);
+    }
+}
+*/
+using System.IO.Compression;
+
+namespace FO2Dat
+{
+    public class ZLibHelperService
+    {
+        public static byte[] compress(byte[] source)
+        {
+            using var outputStream = new MemoryStream();
+            using (var zlibStream = new ZLibStream(outputStream, CompressionLevel.SmallestSize))
+            {
+                zlibStream.Write(source, 0, source.Length);
+            }
+            return outputStream.ToArray();
+        }
+
+        public static byte[] uncompress(byte[] compressed, uint realSize)
+        {
+            using var inputStream = new MemoryStream(compressed);
+            using var zlibStream = new ZLibStream(inputStream, CompressionMode.Decompress);
+            var output = new byte[realSize];
+            int totalRead = 0;
+            while (totalRead < (int)realSize)
+            {
+                int read = zlibStream.Read(output, totalRead, (int)realSize - totalRead);
+                if (read == 0) break;
+                totalRead += read;
+            }
+            return output;
+        }
     }
 }
